@@ -9,7 +9,9 @@ var twitterKeys = keys.twitterKeys;
 // Define a port to listen for incoming requests
 var PORT = 7600;
 var PORT2 = 7700;
-var PORT3 = 8080;
+var PORT3 = 8800;
+
+
 
 // Create a generic function to handle requests and responses
 function handleRequest(request, response) {
@@ -28,10 +30,39 @@ function handleRequest2(request, response) {
 
 // Create a generic function to handle requests and responses
 function handleRequest3(request, response) {
+  var userInput = "ahmetburhan"
+  function myTweets() {
+    var client = new twitter(keys.twitterKeys);
+    // Twitter parameters
+    var isInputNull = userInput === "" ? userInput = "ahmetburhan" : userInput = userInput;
+
+    var params = {
+      "screen_name": userInput,
+      "count": 20
+    }
+    client.get("statuses/user_timeline", params, function (err, tweet, response) {
+      if (err) {
+        return console.log(err);
+      } else {
+        for (var i = 0; i < tweet.length; i++) {
+          console.log(tweet[i].created_at);
+          console.log(tweet[i].text);
+
+          fs.appendFile("log.txt", "\n" + tweet[i].created_at + "\n" + tweet[i].text, function (err) {
+            if (err) {
+              console.log(err);
+            }
+          })
+        }
+      }
+    })
+  }
+
+
 
 
   // Send the below string to the client when the user visits the PORT URL
-  response.end(myTweets.response);
+  response.end(response);
 }
 
 
@@ -52,13 +83,6 @@ server.listen(PORT, function() {
 
 
 
-// Start our server so that it can begin listening to client requests.
-server.listen(PORT3, function () {
-
-  // Log (server-side) when our server has started
-  console.log("Server listening on: http://localhost:" + PORT3);
-  // console.log(myTweets(response))
-});
 server2.listen(PORT2, function () {
 
   // Log (server-side) when our server has started
@@ -66,31 +90,10 @@ server2.listen(PORT2, function () {
 });
 
 
-function myTweets() {
-  var client = new twitter(keys.twitterKeys);
-  // Twitter parameters
-  var isInputNull = userInput === "" ? userInput = "ahmetburhan" : userInput = userInput;
+// Start our server so that it can begin listening to client requests.
+server3.listen(PORT3, function () {
 
-  var params = {
-    "screen_name": userInput,
-    "count": 20
-  }
-  client.get("statuses/user_timeline", params, function (err, tweet, response) {
-    if (err) {
-      return console.log(err);
-    } else {
-      for (var i = 0; i < tweet.length; i++) {
-        console.log(tweet[i].created_at);
-        console.log(tweet[i].text);
-
-        fs.appendFile("log.txt", "\n" + tweet[i].created_at + "\n" + tweet[i].text, function (err) {
-          if (err) {
-            console.log(err);
-          }
-        })
-      }
-    }
-  })
-}
-
-
+  // Log (server-side) when our server has started
+  console.log("Server listening on: http://localhost:" + PORT3);
+  // console.log(myTweets(response))
+});
